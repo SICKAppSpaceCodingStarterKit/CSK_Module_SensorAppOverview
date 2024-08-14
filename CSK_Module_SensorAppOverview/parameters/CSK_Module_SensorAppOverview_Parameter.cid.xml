@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Device xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="..\..\..\..\Docu\Parameter.cid.xsd">
+  <UserLevel/>
+  <IFD>
+    <CID>
+      <Block Name="CSK_Module_SensorAppOverview">
+        <Group Name="Group">
+          <Variable Description="Name of MainApp" Name="MainAppName" VirtualMemoryRef="ApplicationParameters">
+            <BasicType>
+              <String FixedLength="False" Length="99" DefaultValue="CSK_Module_SensorAppOverview"/>
+            </BasicType>
+          </Variable>
+        </Group>
+      </Block>
+    </CID>
+  </IFD>
+  <Hardware>
+    <VirtualMemory Name="ApplicationParameters"/>
+  </Hardware>
+</Device>

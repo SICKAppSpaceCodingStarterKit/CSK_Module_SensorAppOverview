@@ -31,26 +31,29 @@ setSensorAppOverview_ModelHandle(sensorAppOverview_Model)
 --Loading helper functions if needed
 sensorAppOverview_Model.helperFuncs = require('System/SensorAppOverview/helper/funcs')
 
--- Optionally check if specific API was loaded via
---[[
-if _G.availableAPIs.specific then
--- ... doSomething ...
+sensorAppOverview_Model.styleForUI = 'None' -- Optional parameter to set UI style
+sensorAppOverview_Model.linkMainAppPrefix = '/#!msdd=' -- URL Prefix for MainApp link
+sensorAppOverview_Model.editMode = false -- Show MainApp configuration
+sensorAppOverview_Model.mainAppImage = nil -- Hold binary of MainApp image if available
+sensorAppOverview_Model.mainAppName = Parameters.get('MainAppName') or '' -- Name of MainApp
+sensorAppOverview_Model.configurationMode = 'Default' -- Mode of MainApp configuration mode ('Edit', 'Default')
+sensorAppOverview_Model.mainAppMode = 'NoMainApp' -- MainApp mode ('MainAppNoImage', 'NoMainApp', 'MainAppImage')
+sensorAppOverview_Model.appList = sensorAppOverview_Model.helperFuncs.createAppJsonList(Engine.listApps()) -- List of available apps
+
+-- Prepare public folder structure
+local dirExist = File.isdir('/public/HomeScreen')
+if not dirExist then
+  File.mkdir('/public/HomeScreen')
 end
-]]
 
---[[
--- Create parameters / instances for this module
-sensorAppOverview_Model.object = Image.create() -- Use any AppEngine CROWN
-sensorAppOverview_Model.counter = 1 -- Short docu of variable
-sensorAppOverview_Model.varA = 'value' -- Short docu of variable
---...
-]]
-
--- Parameters to be saved permanently if wanted
-sensorAppOverview_Model.parameters = {}
---sensorAppOverview_Model.parameters.paramA = 'paramA' -- Short docu of variable
---sensorAppOverview_Model.parameters.paramB = 123 -- Short docu of variable
---...
+-- Check if MainApp image exist
+local appImageExists = File.exists('/public/HomeScreen/MainApp.bin')
+if not appImageExists then
+  File.copy('/resources/CSK_Module_SensorAppOverview/MainApp.bin', '/public/HomeScreen/MainApp.bin')
+end
+local f = File.open("/public/HomeScreen/MainApp.bin", 'rb')
+sensorAppOverview_Model.mainAppImage = f:read()
+f:close()
 
 --**************************************************************************
 --********************** End Global Scope **********************************
@@ -58,15 +61,51 @@ sensorAppOverview_Model.parameters = {}
 --**********************Start Function Scope *******************************
 --**************************************************************************
 
---[[
--- Some internal code docu for local used function to do something
----@param content auto Some info text if function is not already served
-local function doSomething(content)
-  _G.logger:info(nameOfModule .. ": Do something")
-  sensorAppOverview_Model.counter = sensorAppOverview_Model.counter + 1
+-- Function to setup MainApp mode
+local function checkStatus()
+  if sensorAppOverview_Model.mainAppName ~= '' then
+    if sensorAppOverview_Model.mainAppImage then
+      sensorAppOverview_Model.mainAppMode = 'MainAppImage'
+    else
+      sensorAppOverview_Model.mainAppMode = 'MainAppNoImage'
+    end
+  else
+    sensorAppOverview_Model.mainAppMode = 'NoMainApp'
+  end
 end
-sensorAppOverview_Model.doSomething = doSomething
-]]
+sensorAppOverview_Model.checkStatus = checkStatus
+checkStatus()
+
+--- Function to set main app
+---@param appName string Name of main app
+local function setMainWebpage(appName)
+  local defaultWebpage = Parameters.get("AEDefaultWebpage")
+  if defaultWebpage == nil then
+    assert(false, "AppEngine does not support setting the default webpage over variable AEDefaultWebpage")
+  else
+    assert(Parameters.set("AEDefaultWebpage", appName))
+    sensorAppOverview_Model.mainAppName = appName
+    Parameters.set('MainAppName', sensorAppOverview_Model.mainAppName)
+    Parameters.savePermanent()
+    checkStatus()
+  end
+end
+sensorAppOverview_Model.setMainWebpage = setMainWebpage
+
+local starterApp = Parameters.get('MainAppName')
+local appCheck = false
+local appList = Engine.listApps()
+for key, _ in pairs(appList) do
+  if appList[key] == starterApp then
+    appCheck = true
+  end
+end
+
+if appCheck then
+  setMainWebpage(starterApp)
+else
+  setMainWebpage('CSK_Module_SensorAppOverview')
+end
 
 --*************************************************************************
 --********************** End Function Scope *******************************

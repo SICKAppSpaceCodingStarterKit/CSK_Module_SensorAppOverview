@@ -6,13 +6,13 @@
 local availableAPIs = {}
 
 local function loadAPIs()
-  CSK_ModuleName = require 'API.CSK_ModuleName'
+  CSK_SensorAppOverview = require 'API.CSK_SensorAppOverview'
 
-  Container = require 'API.Container'
-  Engine = require 'API.Engine'
   Log = require 'API.Log'
   Log.Handler = require 'API.Log.Handler'
   Log.SharedLogger = require 'API.Log.SharedLogger'
+  Container = require 'API.Container'
+  Engine = require 'API.Engine'
   Object = require 'API.Object'
   Timer = require 'API.Timer'
 

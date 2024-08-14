@@ -6,16 +6,38 @@
         </crown>
         <crown name="CSK_SensorAppOverview">
             <trait>released</trait>
-            <desc>Please fill in information regarding: What is the idea of this module and its features? +
-How to use this module in general.... like: + 
-{empty} + 
-Typically the features of this module are used like this (check also main script of this module): +
-**1) Setup** +
-ToDo +
-{empty} + 
-**2) Something else...** +
-</desc>
+            <desc>Module to show a list of available apps in the UI and to open their related UI. +
+Additionally it is possible to set an app to load per default after reboot ('setMainAppName'). +
+The name of this default MainApp is saved as AppSpace Parameter 'MainAppName'.</desc>
             <serves>
+                <event name="OnNewConfigurationMode">
+                    <desc>Notify change of configuration mode within UI.</desc>
+                    <param desc="Mode" multiplicity="1" name="mode" type="string"/>
+                </event>
+                <event name="OnNewMainAppName">
+                    <desc>Notify name of MainApp.</desc>
+                    <param desc="Name of MainApp." multiplicity="1" name="name" type="string"/>
+                </event>
+                <event name="OnNewMainAppMode">
+                    <desc>Notify change of MainApp mode within UI.</desc>
+                    <param desc="Mode" multiplicity="1" name="mode" type="string"/>
+                </event>
+                <event name="OnNewImage">
+                    <desc>Notify MainApp image.</desc>
+                    <param desc="Image data" multiplicity="1" name="imageData" type="binary"/>
+                </event>
+                <event name="OnNewStatusEditMode">
+                    <desc>Notify status of edit mode.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </event>
+                <event name="OnNewMainAppLink">
+                    <desc>Notify link to MainApp.</desc>
+                    <param desc="Link" multiplicity="1" name="link" type="string"/>
+                </event>
+                <event name="OnNewStatusCSKStyle">
+                    <desc>Notify UI style to use for CSK modules.</desc>
+                    <param desc="UI style" multiplicity="1" name="theme" type="string"/>
+                </event>
                 <event name="OnNewStatusLoadParameterOnReboot">
                     <desc>Notify status if parameters should be loaded on app/device boot up.</desc>
                     <param desc="Status" multiplicity="1" name="status" type="bool"/>
@@ -47,6 +69,10 @@ ToDo +
                     <desc>Status of Admin userlevel. Used internally in combination with the CSK_UserManagement module if available.</desc>
                     <param desc="Status" multiplicity="1" name="status" type="bool"/>
                 </event>
+                <event name="OnNewSensorAppList">
+                    <desc>Notify list of available SensorApp names.</desc>
+                    <param desc="List of apps." multiplicity="1" name="list" type="string"/>
+                </event>
                 <function name="setParameterName">
                     <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
                     <param desc="Name of the parameter." multiplicity="1" name="name" type="string"/>
@@ -65,10 +91,29 @@ ToDo +
                     <desc>Function to register "OnResume" of the module UI (only as helper function).</desc>
                     <return desc="Empty string (only needed to simplify binding)." multiplicity="1" name="empty" type="string"/>
                 </function>
+                <function name="setEditMode">
+                    <desc>Function to set edit mode within UI to configure default app.</desc>
+                    <param desc="Status" multiplicity="1" name="status" type="bool"/>
+                </function>
+                <function name="setMainAppName">
+                    <desc>Function to set MainApp name.</desc>
+                    <param desc="Name of app." multiplicity="1" name="nameOfApp" type="string"/>
+                </function>
+                <function name="uploadImage">
+                    <desc>Function to finalize image file upload.</desc>
+                    <param desc="Status of upload." multiplicity="1" name="finished" type="bool"/>
+                </function>
+                <function name="clearImage">
+                    <desc>Function to clear image of main app.</desc>
+                </function>
+                <function name="openUI">
+                    <desc>Function to open UI of selected app.</desc>
+                    <param desc="Name of app to show UI." multiplicity="1" name="appName" type="string"/>
+                </function>
             </serves>
         </crown>
         <meta key="author">SICK AG</meta>
-        <meta key="version">0.1.0</meta>
+        <meta key="version">1.0.0</meta>
         <meta key="priority">low</meta>
         <meta key="copy-protected">false</meta>
         <meta key="read-protected">false</meta>
