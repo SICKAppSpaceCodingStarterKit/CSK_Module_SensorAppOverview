@@ -1,9 +1,50 @@
-.myCustomFrame_CSK_Module_SensorAppOverview {
+.myCustomLink_CSK_Module_SensorAppOverview {
   border-style: solid;
-  border-width: 1px;
+  border-width: 5px;
   border-color: grey;
-  margin: 6px;
+  font-size: 25px;
 }
 
-.myCustomCssClass_CSK_Module_SensorAppOverview {
+.myCustomFrameNoColor_CSK_Module_SensorAppOverview {
+  margin: 6px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 0px;
+  border-color: 007CC1;
+  background-color: white;
+}
+
+.myCustomFrame_CSK_Module_SensorAppOverview {
+  margin: 6px;
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #007CC1;
+  background-color: white;
+}
+
+.myCustomLabel_CSK_Module_SensorAppOverview {
+  font-size:30px;
+  color: grey;
+  margin-top: 10px;
+}
+
+.myCustomFrameLabel_CSK_Module_SensorAppOverview {
+  background: white;
+  position:relative;
+  top: calc(-1.2rem);
+  left: calc(1rem);
+  font-size: medium;
+}
+
+.myCustomSpacerVert10_CSK_Module_SensorAppOverview {
+  min-height: 10px;
+}
+
+.myCustomBackground_CSK_Module_SensorAppOverview {
+}
+
+.myCustomButton_CSK_Module_SensorAppOverview {
+  border-radius: 30px;
+  padding-right: 0px;
 }

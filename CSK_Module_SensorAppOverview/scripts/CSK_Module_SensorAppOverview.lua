@@ -21,15 +21,9 @@
 --SOFTWARE.
 
 ---@diagnostic disable: undefined-global, redundant-parameter, missing-parameter
--- CreationTemplateVersion: 3.6.0
 --**************************************************************************
 --**********************Start Global Scope *********************************
 --**************************************************************************
-
--- If app property "LuaLoadAllEngineAPI" is FALSE, use this to load and check for required APIs
--- This can improve performance of garbage collection
-
---_G.availableAPIs = require('System/SensorAppOverview/helper/checkAPIs') -- can be used to adjust function scope of the module related on available APIs of the device
 -----------------------------------------------------------
 -- Logger
 _G.logger = Log.SharedLogger.create('ModuleLogger')
@@ -53,26 +47,10 @@ _G.sensorAppOverview_Model = require('System/SensorAppOverview/SensorAppOverview
 --- Function to react on startup event of the app
 local function main()
 
-  ----------------------------------------------------------------------------------------
-  -- INFO: Please check if module will eventually load inital configuration triggered via
-  --       event CSK_PersistentData.OnInitialDataLoaded
-  --       (see internal variable _G.sensorAppOverview_Model.parameterLoadOnReboot)
-  --       If so, the app will trigger the "OnDataLoadedOnReboot" event if ready after loading parameters
-  --
-  -- Can be used e.g. like this
-  ----------------------------------------------------------------------------------------
-
-  -- _G.sensorAppOverview_Model.doSomething() -- if you want to start a function
-  -- ...
   CSK_SensorAppOverview.pageCalled() -- Update UI
 
 end
 Script.register("Engine.OnStarted", main)
-
---OR
-
--- Call function after persistent data was loaded
---Script.register("CSK_SensorAppOverview.OnDataLoadedOnReboot", main)
 
 --**************************************************************************
 --**********************End Function Scope *********************************
