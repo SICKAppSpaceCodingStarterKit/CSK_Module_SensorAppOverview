@@ -73,15 +73,13 @@ The name of this default MainApp is saved as AppSpace Parameter 'MainAppName'.</
                     <desc>Notify list of available SensorApp names.</desc>
                     <param desc="List of apps." multiplicity="1" name="list" type="string"/>
                 </event>
+                <event name="OnNewStatusModuleVersion">
+                    <desc>Notify version of module.</desc>
+                    <param desc="Version" multiplicity="1" name="version" type="string"/>
+                </event>
                 <function name="setParameterName">
                     <desc>Function to set the name of the parameters if saved/loaded via the CSK_PersistentData module.</desc>
                     <param desc="Name of the parameter." multiplicity="1" name="name" type="string"/>
-                </function>
-                <function name="sendParameters">
-                    <desc>Send parameters to CSK_PersistentData module if possible to save them.</desc>
-                </function>
-                <function name="loadParameters">
-                    <desc>Load parameters for this module from the CSK_PersistentData module if possible and use them.</desc>
                 </function>
                 <function name="setLoadOnReboot">
                     <desc>Configure if this module should load its saved parameters at app/device boot up.</desc>
@@ -109,6 +107,14 @@ The name of this default MainApp is saved as AppSpace Parameter 'MainAppName'.</
                 <function name="openUI">
                     <desc>Function to open UI of selected app.</desc>
                     <param desc="Name of app to show UI." multiplicity="1" name="appName" type="string"/>
+                </function>
+                <function name="loadParameters">
+                    <desc>Load parameters for this module from the CSK_PersistentData module if possible and use them.</desc>
+                    <return desc="Success to load parameters." multiplicity="1" name="success" type="bool"/>
+                </function>
+                <function name="sendParameters">
+                    <desc>Send parameters to CSK_PersistentData module if possible to save them.</desc>
+                    <param desc="[Optional] Set to TRUE if the data should NOT be saved immediately after sending." multiplicity="?" name="noDataSave" type="bool"/>
                 </function>
             </serves>
         </crown>

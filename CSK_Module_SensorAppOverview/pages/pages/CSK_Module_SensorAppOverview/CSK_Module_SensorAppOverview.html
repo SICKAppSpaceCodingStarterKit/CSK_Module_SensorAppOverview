@@ -1,9 +1,16 @@
 <layout-row id="RowLayout1" class="myCustomBackground_CSK_Module_SensorAppOverview">
     <layout-column id="ColumnLayout2" class="myCustomFrameNoColor_CSK_Module_SensorAppOverview"
         style="align-items: stretch">
-        <davinci-value-display id="VD_Title" class="myCustomLabel_CSK_Module_SensorAppOverview"
-            value="SensorApps Overview">
-        </davinci-value-display>
+        <layout-row id="RowLayout12" style="align-items: baseline">
+            <davinci-value-display id="VD_Title" class="myCustomLabel_CSK_Module_SensorAppOverview"
+                value="SensorApps Overview">
+            </davinci-value-display>
+            <davinci-value-display id="VD_Version">
+                <crown-edpws-binding property="value" name="CSK_SensorAppOverview/OnNewStatusModuleVersion"
+                    update-on-resume>
+                </crown-edpws-binding>
+            </davinci-value-display>
+        </layout-row>
         <layout-row id="RowLayout10" class="myCustomSpacerVert10_CSK_Module_SensorAppOverview"
             style="flex-grow: 0; flex-shrink: 0">
         </layout-row>

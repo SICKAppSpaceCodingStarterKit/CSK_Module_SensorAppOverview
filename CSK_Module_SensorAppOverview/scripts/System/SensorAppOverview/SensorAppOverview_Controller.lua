@@ -24,6 +24,8 @@ tmrUIshort:setPeriodic(false)
 local sensorAppOverview_Model
 
 -- ************************ UI Events Start ********************************
+Script.serveEvent('CSK_SensorAppOverview.OnNewStatusModuleVersion', 'SensorAppOverview_OnNewStatusModuleVersion')
+
 Script.serveEvent('CSK_SensorAppOverview.OnNewMainAppLink', 'SensorAppOverview_OnNewMainAppLink')
 Script.serveEvent('CSK_SensorAppOverview.OnNewStatusEditMode', 'SensorAppOverview_OnNewStatusEditMode')
 Script.serveEvent('CSK_SensorAppOverview.OnNewImage', 'SensorAppOverview_OnNewImage')
@@ -110,6 +112,7 @@ local function handleOnExpiredTmrSensorAppOverview()
 
   updateUserLevel()
 
+  Script.notifyEvent("SensorAppOverview_OnNewStatusModuleVersion", 'v' .. sensorAppOverview_Model.version)
   Script.notifyEvent('SensorAppOverview_OnNewStatusCSKStyle', sensorAppOverview_Model.styleForUI)
   Script.notifyEvent('SensorAppOverview_OnNewMainAppMode', sensorAppOverview_Model.mainAppMode)
   Script.notifyEvent('SensorAppOverview_OnNewConfigurationMode', sensorAppOverview_Model.configurationMode)
@@ -197,7 +200,9 @@ local function setParameterName(name)
 end
 Script.serveFunction("CSK_SensorAppOverview.setParameterName", setParameterName)
 
-local function sendParameters()
+local function sendParameters(noDataSave)
+  -- No need for this feature in this module till now ...
+  --[[
   if sensorAppOverview_Model.persistentModuleAvailable then
     CSK_PersistentData.addParameter(sensorAppOverview_Model.helperFuncs.convertTable2Container(sensorAppOverview_Model.parameters), sensorAppOverview_Model.parametersName)
     CSK_PersistentData.setModuleParameterName(nameOfModule, sensorAppOverview_Model.parametersName, sensorAppOverview_Model.parameterLoadOnReboot)
@@ -206,10 +211,13 @@ local function sendParameters()
   else
     _G.logger:warning(nameOfModule .. ": CSK_PersistentData module not available.")
   end
+  ]]
 end
 Script.serveFunction("CSK_SensorAppOverview.sendParameters", sendParameters)
 
 local function loadParameters()
+  -- No need for this feature in this module till now ...
+  --[[
   if sensorAppOverview_Model.persistentModuleAvailable then
     local data = CSK_PersistentData.getParameter(sensorAppOverview_Model.parametersName)
     if data then
@@ -226,6 +234,8 @@ local function loadParameters()
   else
     _G.logger:warning(nameOfModule .. ": CSK_PersistentData module not available.")
   end
+  ]]
+  return true
 end
 Script.serveFunction("CSK_SensorAppOverview.loadParameters", loadParameters)
 

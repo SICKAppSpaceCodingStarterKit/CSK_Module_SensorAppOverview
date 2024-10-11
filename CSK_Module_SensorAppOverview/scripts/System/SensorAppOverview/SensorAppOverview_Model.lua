@@ -31,6 +31,7 @@ setSensorAppOverview_ModelHandle(sensorAppOverview_Model)
 --Loading helper functions if needed
 sensorAppOverview_Model.helperFuncs = require('System/SensorAppOverview/helper/funcs')
 
+sensorAppOverview_Model.version = Engine.getCurrentAppVersion() -- Version of module
 sensorAppOverview_Model.styleForUI = 'None' -- Optional parameter to set UI style
 sensorAppOverview_Model.linkMainAppPrefix = '/#!msdd=' -- URL Prefix for MainApp link
 sensorAppOverview_Model.editMode = false -- Show MainApp configuration

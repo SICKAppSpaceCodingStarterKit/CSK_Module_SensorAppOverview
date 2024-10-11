@@ -134,7 +134,9 @@ local function createAppJsonList(data)
     appList = {{DTC_Name = '-'},}
   else
     for _, value in pairs(data) do
-      table.insert(appList, {DTC_Name = value})
+      if value ~= 'CSK_Module_SensorAppOverview' then
+        table.insert(appList, {DTC_Name = value})
+      end
     end
   end
   --table.sort(sortedTable)
