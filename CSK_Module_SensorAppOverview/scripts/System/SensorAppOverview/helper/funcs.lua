@@ -124,6 +124,26 @@ local function createJsonList(data)
 end
 funcs.createJsonList = createJsonList
 
+--- Function to get app name list as JSON string
+---@param data string[] Table with data entries
+---@return string sortedTable Sorted entries as JSON string
+local function createAppJsonList(data)
+  local appList = {}
+
+  if data == nil then
+    appList = {{DTC_Name = '-'},}
+  else
+    for _, value in pairs(data) do
+      if value ~= 'CSK_Module_SensorAppOverview' then
+        table.insert(appList, {DTC_Name = value})
+      end
+    end
+  end
+  --table.sort(sortedTable)
+  return funcs.json.encode(appList)
+end
+funcs.createAppJsonList = createAppJsonList
+
 --- Function to create a list from table
 ---@param content string[] Table with data entries
 ---@return string list String list

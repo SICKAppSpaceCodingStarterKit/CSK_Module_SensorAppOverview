@@ -12,15 +12,30 @@ local nameOfModule = 'CSK_SensorAppOverview'
 
 -- Timer to update UI via events after page was loaded
 local tmrSensorAppOverview = Timer.create()
-tmrSensorAppOverview:setExpirationTime(300)
+tmrSensorAppOverview:setExpirationTime(500)
 tmrSensorAppOverview:setPeriodic(false)
+
+-- Timer to notify events after UI page was called
+local tmrUIshort = Timer.create()
+tmrUIshort:setExpirationTime(100)
+tmrUIshort:setPeriodic(false)
 
 -- Reference to global handle
 local sensorAppOverview_Model
 
 -- ************************ UI Events Start ********************************
+Script.serveEvent('CSK_SensorAppOverview.OnNewStatusModuleVersion', 'SensorAppOverview_OnNewStatusModuleVersion')
 
--- Script.serveEvent("CSK_SensorAppOverview.OnNewEvent", "SensorAppOverview_OnNewEvent")
+Script.serveEvent('CSK_SensorAppOverview.OnNewMainAppLink', 'SensorAppOverview_OnNewMainAppLink')
+Script.serveEvent('CSK_SensorAppOverview.OnNewStatusEditMode', 'SensorAppOverview_OnNewStatusEditMode')
+Script.serveEvent('CSK_SensorAppOverview.OnNewImage', 'SensorAppOverview_OnNewImage')
+Script.serveEvent('CSK_SensorAppOverview.OnNewConfigurationMode', "SensorAppOverview_OnNewConfigurationMode")
+Script.serveEvent('CSK_SensorAppOverview.OnNewMainAppMode', "SensorAppOverview_OnNewMainAppMode")
+Script.serveEvent('CSK_SensorAppOverview.OnNewMainAppName', "SensorAppOverview_OnNewMainAppName")
+Script.serveEvent('CSK_SensorAppOverview.OnNewStatusCSKStyle', 'SensorAppOverview_OnNewStatusCSKStyle')
+
+Script.serveEvent('CSK_SensorAppOverview.OnNewSensorAppList', 'SensorAppOverview_OnNewSensorAppList')
+
 Script.serveEvent("CSK_SensorAppOverview.OnNewStatusLoadParameterOnReboot", "SensorAppOverview_OnNewStatusLoadParameterOnReboot")
 Script.serveEvent("CSK_SensorAppOverview.OnPersistentDataModuleAvailable", "SensorAppOverview_OnPersistentDataModuleAvailable")
 Script.serveEvent("CSK_SensorAppOverview.OnNewParameterName", "SensorAppOverview_OnNewParameterName")
@@ -31,18 +46,7 @@ Script.serveEvent('CSK_SensorAppOverview.OnUserLevelMaintenanceActive', 'SensorA
 Script.serveEvent('CSK_SensorAppOverview.OnUserLevelServiceActive', 'SensorAppOverview_OnUserLevelServiceActive')
 Script.serveEvent('CSK_SensorAppOverview.OnUserLevelAdminActive', 'SensorAppOverview_OnUserLevelAdminActive')
 
--- ...
-
 -- ************************ UI Events End **********************************
-
---[[
---- Some internal code docu for local used function
-local function functionName()
-  -- Do something
-
-end
-]]
-
 --**************************************************************************
 --********************** End Global Scope **********************************
 --**************************************************************************
@@ -108,12 +112,25 @@ local function handleOnExpiredTmrSensorAppOverview()
 
   updateUserLevel()
 
-  -- Script.notifyEvent("SensorAppOverview_OnNewEvent", false)
+  Script.notifyEvent("SensorAppOverview_OnNewStatusModuleVersion", 'v' .. sensorAppOverview_Model.version)
+  Script.notifyEvent('SensorAppOverview_OnNewStatusCSKStyle', sensorAppOverview_Model.styleForUI)
+  Script.notifyEvent('SensorAppOverview_OnNewMainAppMode', sensorAppOverview_Model.mainAppMode)
+  Script.notifyEvent('SensorAppOverview_OnNewConfigurationMode', sensorAppOverview_Model.configurationMode)
+  Script.notifyEvent('SensorAppOverview_OnNewMainAppName', sensorAppOverview_Model.mainAppName)
+  Script.notifyEvent('SensorAppOverview_OnNewStatusEditMode', sensorAppOverview_Model.editMode)
+
+  Script.notifyEvent('SensorAppOverview_OnNewMainAppLink', sensorAppOverview_Model.linkMainAppPrefix .. sensorAppOverview_Model.mainAppName)
+
+  if sensorAppOverview_Model.mainAppImage then
+    Script.notifyEvent('SensorAppOverview_OnNewImage', sensorAppOverview_Model.mainAppImage)
+  end
+
+  Script.notifyEvent('SensorAppOverview_OnNewSensorAppList', sensorAppOverview_Model.appList)
 
   Script.notifyEvent("SensorAppOverview_OnNewStatusLoadParameterOnReboot", sensorAppOverview_Model.parameterLoadOnReboot)
   Script.notifyEvent("SensorAppOverview_OnPersistentDataModuleAvailable", sensorAppOverview_Model.persistentModuleAvailable)
   Script.notifyEvent("SensorAppOverview_OnNewParameterName", sensorAppOverview_Model.parametersName)
-  -- ...
+
 end
 Timer.register(tmrSensorAppOverview, "OnExpired", handleOnExpiredTmrSensorAppOverview)
 
@@ -122,41 +139,85 @@ Timer.register(tmrSensorAppOverview, "OnExpired", handleOnExpiredTmrSensorAppOve
 local function pageCalled()
   updateUserLevel() -- try to hide user specific content asap
   tmrSensorAppOverview:start()
+  tmrUIshort:start()
   return ''
 end
 Script.serveFunction("CSK_SensorAppOverview.pageCalled", pageCalled)
 
---[[
-local function setSomething(value)
-  _G.logger:info(nameOfModule .. ": Set new value = " .. value)
-  sensorAppOverview_Model.varA = value
+local function clearImage()
+  File.del('public/HomeScreen/MainApp.bin')
+  sensorAppOverview_Model.mainAppImage = nil
+  sensorAppOverview_Model.checkStatus()
+  handleOnExpiredTmrSensorAppOverview()
 end
-Script.serveFunction("CSK_SensorAppOverview.setSomething", setSomething)
-]]
+Script.serveFunction('CSK_SensorAppOverview.clearImage', clearImage)
+
+local function uploadImage(finished)
+  local f = File.open("/public/HomeScreen/MainApp.bin", 'rb')
+  sensorAppOverview_Model.mainAppImage = f:read()
+  f:close()
+  sensorAppOverview_Model.checkStatus()
+  handleOnExpiredTmrSensorAppOverview()
+end
+Script.serveFunction('CSK_SensorAppOverview.uploadImage', uploadImage)
+
+local function setEditMode(status)
+  sensorAppOverview_Model.editMode = status
+  if status then
+    sensorAppOverview_Model.configurationMode = 'Edit'
+  else
+    sensorAppOverview_Model. configurationMode = 'Default'
+  end
+  Script.notifyEvent('SensorAppOverview_OnNewConfigurationMode', sensorAppOverview_Model.configurationMode)
+end
+Script.serveFunction("CSK_SensorAppOverview.setEditMode", setEditMode)
+
+local function setMainAppName(nameOfApp)
+  sensorAppOverview_Model.setMainWebpage(nameOfApp)
+  handleOnExpiredTmrSensorAppOverview()
+end
+Script.serveFunction('CSK_SensorAppOverview.setMainAppName', setMainAppName)
+
+local function openUI(appName)
+  -- Check 'openUI' converter inside of 'pages/src/converter.ts'
+end
+Script.serveFunction('CSK_SensorAppOverview.openUI', openUI)
+
+--- Function to react on UI style change
+local function handleOnStyleChanged(theme)
+  sensorAppOverview_Model.styleForUI = theme
+  Script.notifyEvent("SensorAppOverview_OnNewStatusCSKStyle", sensorAppOverview_Model.styleForUI)
+end
+Script.register('CSK_PersistentData.OnNewStatusCSKStyle', handleOnStyleChanged)
 
 -- *****************************************************************
 -- Following function can be adapted for CSK_PersistentData module usage
 -- *****************************************************************
 
 local function setParameterName(name)
-  _G.logger:info(nameOfModule .. ": Set parameter name: " .. tostring(name))
+  _G.logger:fine(nameOfModule .. ": Set parameter name: " .. tostring(name))
   sensorAppOverview_Model.parametersName = name
 end
 Script.serveFunction("CSK_SensorAppOverview.setParameterName", setParameterName)
 
-local function sendParameters()
+local function sendParameters(noDataSave)
+  -- No need for this feature in this module till now ...
+  --[[
   if sensorAppOverview_Model.persistentModuleAvailable then
     CSK_PersistentData.addParameter(sensorAppOverview_Model.helperFuncs.convertTable2Container(sensorAppOverview_Model.parameters), sensorAppOverview_Model.parametersName)
     CSK_PersistentData.setModuleParameterName(nameOfModule, sensorAppOverview_Model.parametersName, sensorAppOverview_Model.parameterLoadOnReboot)
-    _G.logger:info(nameOfModule .. ": Send SensorAppOverview parameters with name '" .. sensorAppOverview_Model.parametersName .. "' to CSK_PersistentData module.")
+    _G.logger:fine(nameOfModule .. ": Send SensorAppOverview parameters with name '" .. sensorAppOverview_Model.parametersName .. "' to CSK_PersistentData module.")
     CSK_PersistentData.saveData()
   else
     _G.logger:warning(nameOfModule .. ": CSK_PersistentData module not available.")
   end
+  ]]
 end
 Script.serveFunction("CSK_SensorAppOverview.sendParameters", sendParameters)
 
 local function loadParameters()
+  -- No need for this feature in this module till now ...
+  --[[
   if sensorAppOverview_Model.persistentModuleAvailable then
     local data = CSK_PersistentData.getParameter(sensorAppOverview_Model.parametersName)
     if data then
@@ -173,12 +234,14 @@ local function loadParameters()
   else
     _G.logger:warning(nameOfModule .. ": CSK_PersistentData module not available.")
   end
+  ]]
+  return true
 end
 Script.serveFunction("CSK_SensorAppOverview.loadParameters", loadParameters)
 
 local function setLoadOnReboot(status)
   sensorAppOverview_Model.parameterLoadOnReboot = status
-  _G.logger:info(nameOfModule .. ": Set new status to load setting on reboot: " .. tostring(status))
+  _G.logger:fine(nameOfModule .. ": Set new status to load setting on reboot: " .. tostring(status))
 end
 Script.serveFunction("CSK_SensorAppOverview.setLoadOnReboot", setLoadOnReboot)
 
