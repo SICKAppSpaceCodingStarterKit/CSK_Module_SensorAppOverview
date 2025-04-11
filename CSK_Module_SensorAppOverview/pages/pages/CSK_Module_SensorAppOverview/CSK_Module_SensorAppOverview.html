@@ -2,13 +2,12 @@
     <layout-column id="ColumnLayout2" class="myCustomFrameNoColor_CSK_Module_SensorAppOverview"
         style="align-items: stretch">
         <layout-row id="RowLayout12" style="align-items: baseline">
-            <davinci-value-display id="VD_Title" class="myCustomLabel_CSK_Module_SensorAppOverview"
-                value="SensorApps Overview">
-            </davinci-value-display>
+            <h1 id="Heading_Title" class="myCustomLabel_CSK_Module_SensorAppOverview">
+                SensorApps Overview
+            </h1>
             <davinci-value-display id="VD_Version">
-                <crown-edpws-binding property="value" name="CSK_SensorAppOverview/OnNewStatusModuleVersion"
-                    update-on-resume>
-                </crown-edpws-binding>
+                <crown-on property="value" crown-event="CSK_SensorAppOverview/OnNewStatusModuleVersion">
+                </crown-on>
             </davinci-value-display>
         </layout-row>
         <layout-row id="RowLayout10" class="myCustomSpacerVert10_CSK_Module_SensorAppOverview"
@@ -23,9 +22,8 @@
                             <layout-column id="ColumnLayout5" style="align-items: stretch">
                                 <davinci-value-display id="VD_MainAppName1" label="MainApp"
                                     style="align-self: flex-end">
-                                    <crown-edpws-binding property="value" name="CSK_SensorAppOverview/OnNewMainAppName"
-                                        update-on-resume>
-                                    </crown-edpws-binding>
+                                    <crown-on property="value" crown-event="CSK_SensorAppOverview/OnNewMainAppName">
+                                    </crown-on>
                                 </davinci-value-display>
                                 <layout-row id="RowLayout5" style="justify-content: center">
                                     <layout-column id="ColumnLayout9" style="align-items: center">
@@ -47,9 +45,8 @@
                             <layout-column id="ColumnLayout6" style="align-items: stretch">
                                 <davinci-value-display id="VD_MainAppName2" label="MainApp"
                                     style="align-self: flex-end">
-                                    <crown-edpws-binding property="value" name="CSK_SensorAppOverview/OnNewMainAppName"
-                                        update-on-resume>
-                                    </crown-edpws-binding>
+                                    <crown-on property="value" crown-event="CSK_SensorAppOverview/OnNewMainAppName">
+                                    </crown-on>
                                 </davinci-value-display>
                                 <layout-row id="RowLayout4" style="justify-content: center">
                                     <layout-column id="ColumnLayout8" style="align-items: center">
@@ -93,12 +90,14 @@
                                         icon="file/file_upload">
                                         <span>Upload image</span>
                                         <crown-set event="finished" crown-function="CSK_SensorAppOverview/uploadImage"
-                                            protocol="crownMSGPACK" crown-path="finished">
+                                            protocol="crownMSGPACK" crown-path="finished"
+                                            converter="(value)=>{console.log(`event finished ${JSON.stringify(value)}`); return typeof value == 'boolean' ? value : value.success;}">
                                         </crown-set>
                                     </appspace-file-upload-button>
                                     <davinci-button id="Button_clearImage"
                                         class="myCustomButton_CSK_Module_SensorAppOverview" type="outline"
-                                        icon-position="append" icon="content/clear" title="Clear image">
+                                        title="Clear image">
+                                        <davinci-icon icon="content/clear"></davinci-icon>
                                         <span></span>
                                         <crown-binding event="submit" name="CSK_SensorAppOverview/clearImage"
                                             auto-commit>
