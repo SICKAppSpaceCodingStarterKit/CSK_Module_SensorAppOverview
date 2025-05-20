@@ -4,7 +4,7 @@ export function convertToList(value) {
 
 export function openUI(name:unknown) {
   if (typeof name === 'string'){
-    var preString = "/?msdd="
+    var preString = "/#!msdd="
     var endOfName = name.indexOf('"}');
     var moduleName = name.substring(13, endOfName)
     var tempString = preString.concat(moduleName);
@@ -20,6 +20,14 @@ export function getDataFromBinary(binary) {
 export function changeStyle(theme) {
   const style: HTMLStyleElement = document.createElement('style');
   style.id ='blub'
+
+  const toggleSW = document.querySelectorAll("davinci-toggle-switch")
+  toggleSW.forEach((userItem) => {
+    const shadowToggle = userItem.shadowRoot
+    const finalToggleSW = shadowToggle?.querySelector('div')
+    finalToggleSW?.classList.add('hasIcon')
+  });
+
   if (theme == 'CSK_Style'){
     var headerToolbar = `.sopasjs-ui-header-toolbar-wrapper { background-color: #FFFFFF; }`
     var uiHeader = `.sopasjs-ui-header>.app-logo { margin-right:0px; }`
